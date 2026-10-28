@@ -3,7 +3,7 @@ services:
     build:
       context: .
       args:
-        VITE_API_URL: ${VITE_API_URL:-http://localhost:3000}
+        VITE_API_URL: ${VITE_API_URL:-https://api.quannook.site}
     ports:
       - "8080:80"
     restart: unless-stopped
