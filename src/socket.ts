@@ -1,5 +1,6 @@
 import { io, type Socket } from "socket.io-client";
-export const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:3000";
+const configuredSocketUrl = import.meta.env.VITE_SOCKET_URL || "https://dugout-likeness-dislike.ngrok-free.dev";
+export const SOCKET_URL = configuredSocketUrl.replace(/\/+$/, "");
 export function createJoinSocket(): Socket {
   return io(`${SOCKET_URL}/join`, { transports: ["websocket", "polling"] });
 }

@@ -3,7 +3,8 @@ services:
     build:
       context: .
       args:
-        VITE_API_URL: ${VITE_API_URL:-https://api.quannook.site}
+        VITE_API_URL: ${VITE_API_URL:-https://dugout-likeness-dislike.ngrok-free.dev/api}
+        VITE_SOCKET_URL: ${VITE_SOCKET_URL:-https://dugout-likeness-dislike.ngrok-free.dev}
     ports:
       - "8080:80"
     restart: unless-stopped
