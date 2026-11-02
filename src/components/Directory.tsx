@@ -36,10 +36,14 @@ export function Directory({ username, people, selected, onSelect, onStart, onCha
                 <span className="person-info">
                   <strong>{person.name}</strong>
                   <small>
-                    @{person.handle} · {person.status}
+                    @{person.status}
                   </small>
                 </span>
-                <span className="online-dot" />
+                <span
+                  className={`online-dot ${person.online ? "is-online" : "is-offline"}`}
+                  aria-label={person.online ? "Online" : "Offline"}
+                  title={person.status}
+                />
                 {selected === person.handle && <span className="check-icon">✓</span>}
               </button>
             </li>

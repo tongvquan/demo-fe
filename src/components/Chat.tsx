@@ -2,7 +2,7 @@
 import type { FormEvent } from "react";
 import { createMessageSocket } from "../socket";
 import type { Message, Person } from "../types";
-type BackendMessage = Message & { from?: string; content?: string; createdAt?: string };
+type BackendMessage = Message & { from?: string; content?: string; createdAt?: string; readAt?: string | null };
 
 export function Chat({
   userId,
@@ -28,14 +28,26 @@ export function Chat({
     });
     socket.on("disconnect", () => setConnected(false));
     const addMessage = (message: BackendMessage) => {
+      const sender = message.sender ?? message.from ?? "Someone";
       setMessages((current) => [...current, {
         id: message.id,
-        sender: message.sender ?? message.from ?? "Someone",
+        sender,
         text: message.text ?? message.content ?? "",
         time: message.time ?? message.createdAt ?? new Date().toLocaleTimeString(),
+        read: Boolean(message.read || message.readAt),
       }]);
+      if (sender !== username && sender !== userId && message.id) {
+        socket.emit("message:read", { messageId: message.id, userId });
+      }
     };
     socket.on("message:new", addMessage);
+    socket.on("message:read", (receipt: string | { messageId?: string; id?: string }) => {
+      const messageId = typeof receipt === "string" ? receipt : receipt.messageId ?? receipt.id;
+      if (!messageId) return;
+      setMessages((current) => current.map((message) =>
+        message.id === messageId ? { ...message, read: true } : message,
+      ));
+    });
     return () => {
       socket.disconnect();
     };
@@ -61,8 +73,8 @@ export function Chat({
           <div className="chat-person">
             <strong>{person.name}</strong>
             <small>
-              <i className={connected ? "status-online" : ""} />
-              {connected ? "Online now" : "Connecting..."}
+              <i className={person.online ? "status-online" : "status-offline"} />
+              {person.status}
             </small>
           </div>
           {/* <span className="chat-brand">âœ¦ lucid.chat</span> */}
@@ -81,6 +93,9 @@ export function Chat({
               <div className="message-bubble">
                 <span>{message.text}</span>
                 <small>{message.time}</small>
+                {(message.sender === username || message.sender === userId) && message.read && (
+                  <small className="message-status">Seen</small>
+                )}
               </div>
             </div>
           ))}

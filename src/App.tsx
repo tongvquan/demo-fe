@@ -19,13 +19,17 @@ export default function App() {
     socket.on("connect", () => socket.emit("join", { username: joinedAs }));
     socket.on("users:updated", (nextUsers: OnlineUser[]) => {
       setCurrentUserId(nextUsers.find((user) => user.name === joinedAs)?.id ?? "");
-      setUsers(nextUsers.filter((user) => user.name !== joinedAs));
+      setUsers(
+        nextUsers
+        .filter((user) => user.name !== joinedAs)
+        .sort((a, b) => Number(b.online) - Number(a.online)),
+    );
     });
-    socket.on("user:joined", (user: OnlineUser) => {
-      if (user.name !== joinedAs) {
-        setUsers((current) => (current.some((item) => item.id === user.id) ? current : [...current, user]));
-      }
-    });
+      // socket.on("user:joined", (user: OnlineUser) => {
+      //   if (user.name !== joinedAs) {
+      //     setUsers((current) => (current.some((item) => item.id === user.id) ? current : [...current, user]));
+      //   }
+      // });
     return () => {
       socket.disconnect();
     };
@@ -36,7 +40,13 @@ export default function App() {
         name: user.name,
         handle: user.id,
         initials: user.name.slice(0, 2).toUpperCase(),
-        status: "Available to chat",
+        status: user.online
+          ? "Online"
+          : user.lastSeen
+            ? `Last seen ${new Date(user.lastSeen).toLocaleString()}`
+            : "Offline",
+        online: user.online,
+        lastSeen: user.lastSeen,
       })),
     [users],
   );
