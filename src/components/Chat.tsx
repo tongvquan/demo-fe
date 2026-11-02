@@ -27,21 +27,19 @@ export function Chat({
       setConnected(true);
     });
     socket.on("disconnect", () => setConnected(false));
-    socket.on("message:new", (message: BackendMessage) => {
-      setMessages((current) => [
-        ...current,
-        {
-          id: message.id,
-          sender: message.sender ?? message.from ?? "Someone",
-          text: message.text ?? message.content ?? "",
-          time: message.time ?? message.createdAt ?? new Date().toLocaleTimeString(),
-        },
-      ]);
-    });
+    const addMessage = (message: BackendMessage) => {
+      setMessages((current) => [...current, {
+        id: message.id,
+        sender: message.sender ?? message.from ?? "Someone",
+        text: message.text ?? message.content ?? "",
+        time: message.time ?? message.createdAt ?? new Date().toLocaleTimeString(),
+      }]);
+    };
+    socket.on("message:new", addMessage);
     return () => {
       socket.disconnect();
     };
-  }, [person.handle, userId]);
+  }, [person.handle, username, userId]);
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -57,7 +55,7 @@ export function Chat({
       <section className="chat-card">
         <header className="chat-header">
           <button className="back-button" onClick={onBack}>
-            â†
+            Back
           </button>
           <span className="person-avatar">{person.initials}</span>
           <div className="chat-person">
@@ -67,7 +65,7 @@ export function Chat({
               {connected ? "Online now" : "Connecting..."}
             </small>
           </div>
-          <span className="chat-brand">âœ¦ lucid.chat</span>
+          {/* <span className="chat-brand">âœ¦ lucid.chat</span> */}
         </header>
         <div className="messages">
           <div className="conversation-start">
@@ -76,7 +74,10 @@ export function Chat({
             <small>{person.status}</small>
           </div>
           {messages.map((message) => (
-            <div className={`message-row ${message.sender === username ? "mine" : ""}`} key={message.id}>
+            <div
+              className={`message-row ${message.sender === username || message.sender === userId ? "mine" : ""}`}
+              key={message.id}
+            >
               <div className="message-bubble">
                 <span>{message.text}</span>
                 <small>{message.time}</small>
@@ -92,7 +93,7 @@ export function Chat({
             placeholder="Write a message..."
             disabled={!connected}
           />
-          <button disabled={!connected || !text.trim()}>â†‘</button>
+          <button disabled={!connected || !text.trim()}>Send</button>
         </form>
         <p className="chat-hint">Messages are sent in real time Â· signed in as @{username}</p>
       </section>

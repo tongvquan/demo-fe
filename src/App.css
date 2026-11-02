@@ -674,7 +674,7 @@ input::placeholder { color: var(--ink-200); }
 .chat-page { min-height: 100dvh; display: grid; place-items: center; padding: 24px; background: linear-gradient(145deg,#f0f1fa,#eef4f9); }
 .chat-card { width: min(100%, 720px); height: min(760px, calc(100dvh - 48px)); display: flex; flex-direction: column; overflow: hidden; background: rgba(255,255,255,.97); border: 1px solid var(--border); border-radius: var(--r-xl); box-shadow: var(--shadow-lg); }
 .chat-header { display: flex; align-items: center; gap: 12px; padding: 18px 22px; border-bottom: 1px solid var(--border); }
-.back-button { width: 32px; height: 32px; border-radius: 50%; background: var(--p-50); color: var(--p-600); font-size: 20px; }
+.back-button { width: 80px; height: 32px; border-radius: 50%; background: var(--p-50); color: var(--p-600); font-size: 20px; }
 .chat-header .person-avatar { width: 40px; height: 40px; }
 .chat-person { display: flex; flex-direction: column; flex: 1; }
 .chat-person strong { font-size: 14px; }.chat-person small { color: var(--ink-300); font-size: 11px; }
