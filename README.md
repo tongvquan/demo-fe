@@ -1,5 +1,38 @@
 # React + TypeScript + Vite
 
+## Call BE
+
+Frontend code should use the shared client instead of hard-coding the BE URL:
+
+```ts
+import { api } from "./api";
+
+const users = await api.get<User[]>("/users");
+await api.post("/messages", { content: "Hello" });
+```
+
+Configure the backend in `.env`:
+
+```env
+VITE_API_URL=/api
+VITE_SOCKET_URL=/
+VITE_SOCKET_PATH=/socket.io
+```
+
+In production, the browser calls the same frontend origin:
+
+```text
+https://example.com/api/users
+https://example.com/socket.io
+```
+
+The external Nginx server should route `/` to this frontend, `/api` to the
+backend REST API, and `/socket.io` to the backend Socket.IO server.
+It must forward WebSocket upgrade headers for `/socket.io`.
+
+For local development without that external Nginx, set `VITE_DEV_BACKEND_URL`
+in `.env.local`; Vite will proxy `/api` to that URL.
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:

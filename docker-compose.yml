@@ -3,8 +3,9 @@ services:
     build:
       context: .
       args:
-        VITE_API_URL: ${VITE_API_URL:-https://dugout-likeness-dislike.ngrok-free.dev/api}
-        VITE_SOCKET_URL: ${VITE_SOCKET_URL:-https://dugout-likeness-dislike.ngrok-free.dev}
+        VITE_API_URL: ${VITE_API_URL:-/api}
+        VITE_SOCKET_URL: ${VITE_SOCKET_URL:-/}
+        VITE_SOCKET_PATH: ${VITE_SOCKET_PATH:-/socket.io}
     ports:
       - "8080:80"
     restart: unless-stopped
